@@ -1,6 +1,7 @@
 package com.highmobility.sandboxui.controller;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 
 import com.highmobility.autoapi.Capabilities;
@@ -54,7 +55,9 @@ public class ConnectedVehicleController {
     TimerTask repeatTask;
     boolean initializing;
 
-    public static ConnectedVehicleController create(IConnectedVehicleView view, IConnectedVehicleBleView bleView, Intent intent) {
+    public static ConnectedVehicleController create(IConnectedVehicleView view,
+                                                    IConnectedVehicleBleView bleView, Intent
+                                                            intent) {
         byte[] vehicleSerial = intent.getByteArrayExtra(EXTRA_SERIAL);
         boolean useBle = intent.getBooleanExtra(EXTRA_USE_BLE, true);
 
@@ -63,11 +66,11 @@ public class ConnectedVehicleController {
 
         AccessCertificate cert;
         if (vehicleSerial != null) {
-             cert = Manager.getInstance().getCertificate(vehicleSerial);
-        }
-        else {
+            cert = Manager.getInstance().getCertificate(vehicleSerial);
+        } else {
             AccessCertificate[] certificates = Manager.getInstance().getCertificates();
-            if (certificates == null || certificates.length < 1) throw new IllegalStateException("Manager not initialized");
+            if (certificates == null || certificates.length < 1)
+                throw new IllegalStateException("Manager not initialized");
             cert = Manager.getInstance().getCertificates()[0];
             vehicleSerial = cert.getGainerSerial();
         }
@@ -76,8 +79,7 @@ public class ConnectedVehicleController {
 
         if (useBle) {
             controller = new ConnectedVehicleBleController(view, bleView);
-        }
-        else {
+        } else {
             controller = new ConnectedVehicleTelematicsController(view);
         }
 
@@ -96,7 +98,8 @@ public class ConnectedVehicleController {
         vehicle = new VehicleStatus();
     }
 
-    public void init() { }
+    public void init() {
+    }
 
     public void onLockDoorsClicked() {
         view.showLoadingView(true);
@@ -181,9 +184,20 @@ public class ConnectedVehicleController {
     public void readyToSendCommands() {
         initializing = true;
         view.showLoadingView(true);
+
+        new Handler().postDelayed(() -> {
+            // give some time for the fragments to inflate
+            view.onVehicleStatusUpdate(vehicle);
+            view.showLoadingView(false);
+        }, 300);
+        return;
+        // TODO: delete above. for maidu test
+        
+        /*initializing = true;
+        view.showLoadingView(true);
         // capabilities are required to know if action commands are available.
         sentCommand = GetCapabilities.TYPE;
-        sendCommand(new GetCapabilities().getBytes());
+        sendCommand(new GetCapabilities().getBytes());*/
     }
 
     public void willDestroy() {

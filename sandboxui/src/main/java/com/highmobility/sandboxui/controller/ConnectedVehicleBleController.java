@@ -232,6 +232,7 @@ public class ConnectedVehicleBleController extends ConnectedVehicleController im
         broadcaster.startBroadcasting(new Broadcaster.StartCallback() {
             @Override
             public void onBroadcastingStarted() {
+                broadcaster.startAlivePinging(500);
                 onStateChanged(broadcaster.getState());
             }
 

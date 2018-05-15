@@ -20,6 +20,13 @@ allprojects {
         jcenter()
         google()
         maven { url "http://jfrog.high-mobility.com/artifactory/gradle-release-local/" }
+        maven {
+            url "http://jfrog.high-mobility.com/artifactory/gradle-dev-local/"
+            credentials {
+                username System.properties['devReadUser']
+                password System.properties['devReadPassword']
+            }
+        }
     }
 }
 

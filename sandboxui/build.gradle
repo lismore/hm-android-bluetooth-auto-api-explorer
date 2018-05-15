@@ -4,7 +4,7 @@ def artifactProperties = new Properties()
 artifactProperties.load(new FileInputStream("sandboxui/deploy.settings"))
 
 group artifactProperties.groupId
-version artifactProperties.version
+version artifactProperties.version + "-" + new Date().format('MMddHHmm')
 
 android {
     compileSdkVersion 26
